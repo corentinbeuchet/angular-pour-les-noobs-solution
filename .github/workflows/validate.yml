@@ -1,0 +1,78 @@
+name: Validation prof
+
+# Dépôt solution : déballe payload.tar.xz (départ + solutions des 5 TP),
+# génère les package-lock.json, committe, puis prouve chaque projet.
+on:
+  push:
+    paths: [ 'payload.tar.xz', '.github/workflows/validate.yml' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unpack:
+    runs-on: ubuntu-26.04
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Déballer et générer les package-lock.json
+        run: |
+          if [ -f payload.tar.xz ]; then tar -xJf payload.tar.xz && rm payload.tar.xz; fi
+          for d in */; do
+            if [ -f "$d/package.json" ]; then
+              (cd "$d" && npm install --package-lock-only --no-audit --no-fund)
+            fi
+          done
+      - name: Committer
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Déballage + package-lock.json"
+          git push
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  projet:
+    needs: unpack
+    runs-on: ubuntu-26.04
+    strategy:
+      fail-fast: false
+      matrix:
+        dir: [ starter, tp1, tp2, tp3, tp4, tp5 ]
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.unpack.outputs.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: ${{ matrix.dir }}/package-lock.json
+      - run: npm ci
+      - name: Tests unitaires (Vitest)
+        run: |
+          if [ -n "$(find src -name '*.spec.ts')" ]; then
+            npm test -- --watch=false
+          else
+            echo "Pas de tests dans ${{ matrix.dir }}"
+          fi
+      - run: npm run build
+      - name: Tests e2e (Playwright)
+        if: hashFiles(format('{0}/playwright.config.ts', matrix.dir)) != ''
+        run: |
+          npx playwright install --with-deps chromium
+          npm run e2e
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() && hashFiles(format('{0}/playwright.config.ts', matrix.dir)) != '' }}
+        with:
+          name: playwright-report-${{ matrix.dir }}
+          path: ${{ matrix.dir }}/playwright-report/
