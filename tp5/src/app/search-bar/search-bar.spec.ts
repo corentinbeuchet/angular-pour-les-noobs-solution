@@ -5,7 +5,7 @@ describe('SearchBar', () => {
   it('émet le texte saisi', async () => {
     const fixture = TestBed.createComponent(SearchBar);
     const emitted: string[] = [];
-    fixture.componentInstance.search.subscribe((text) => emitted.push(text));
+    fixture.componentInstance.queryChange.subscribe((text) => emitted.push(text));
     await fixture.whenStable();
 
     const input = (fixture.nativeElement as HTMLElement).querySelector('input')!;

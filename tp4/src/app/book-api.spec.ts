@@ -68,8 +68,8 @@ describe('errorMessage', () => {
     expect(errorMessage(error)).toBe('Livre introuvable');
   });
 
-  it('explique quand l\'API ne répond pas', () => {
-    expect(errorMessage(new HttpErrorResponse({ status: 0 }))).toContain('port 8080');
+  it.each([0, 502, 504])('explique quand l\'API ne répond pas (statut %i)', (status) => {
+    expect(errorMessage(new HttpErrorResponse({ status }))).toContain('port 8080');
   });
 
   it('donne le code HTTP à défaut de détail', () => {

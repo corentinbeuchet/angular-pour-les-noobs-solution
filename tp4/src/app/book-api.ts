@@ -33,7 +33,8 @@ export function errorMessage(error: unknown): string {
     if (typeof detail === 'string') {
       return detail;
     }
-    if (error.status === 0) {
+    // 0 : aucune réponse ; 502/504 : le proxy de ng serve n'a pas pu joindre l'API
+    if (error.status === 0 || error.status === 502 || error.status === 504) {
       return 'L\'API ne répond pas : est-elle démarrée sur le port 8080 ?';
     }
     return `Erreur ${error.status}`;

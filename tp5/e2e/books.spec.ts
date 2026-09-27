@@ -63,8 +63,9 @@ test('supprime un livre', async () => {
 });
 
 test('prévient quand l\'API ne répond pas', async ({ page }) => {
+  // API arrêtée : le proxy de ng serve répond 502 (Bad Gateway), sans ProblemDetail
   await page.unrouteAll();
-  await page.route(/\/books(\?.*)?$/, (route) => route.abort());
+  await page.route(/\/books(\?.*)?$/, (route) => route.fulfill({ status: 502, body: '' }));
 
   await library.openList();
 

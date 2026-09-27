@@ -10,10 +10,13 @@ import { Component, output } from '@angular/core';
   `,
 })
 export class SearchBar {
-  /** Émis à chaque frappe, avec le texte saisi. */
-  readonly search = output<string>();
+  /**
+   * Émis à chaque frappe, avec le texte saisi.
+   * (Pas « search » : c'est déjà un événement natif des <input type="search">.)
+   */
+  readonly queryChange = output<string>();
 
   protected onInput(event: Event): void {
-    this.search.emit((event.target as HTMLInputElement).value);
+    this.queryChange.emit((event.target as HTMLInputElement).value);
   }
 }

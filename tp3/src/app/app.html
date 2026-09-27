@@ -1,7 +1,7 @@
 <h1>Ma bibliothèque</h1>
 
 <div class="toolbar">
-  <app-search-bar (search)="query.set($event)" />
+  <app-search-bar (queryChange)="query.set($event)" />
 
   <label>
     Trier par
