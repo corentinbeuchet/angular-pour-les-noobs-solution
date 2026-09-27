@@ -1,0 +1,35 @@
+<h2>Ajouter un livre</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>
+    ISBN
+    <input formControlName="isbn" inputmode="numeric" placeholder="9780132350884" />
+  </label>
+  @if (form.controls.isbn.touched && form.controls.isbn.invalid) {
+    <p class="error">L'ISBN compte 13 chiffres, sans tirets.</p>
+  }
+
+  <label>
+    Titre
+    <input formControlName="title" />
+  </label>
+
+  <label>
+    Auteur
+    <input formControlName="author" />
+  </label>
+
+  <label>
+    Année
+    <input type="number" formControlName="year" />
+  </label>
+
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+
+  <div class="actions">
+    <button type="submit" [disabled]="form.invalid">Ajouter</button>
+    <a routerLink="/livres">Annuler</a>
+  </div>
+</form>

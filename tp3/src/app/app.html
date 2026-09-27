@@ -1,0 +1,20 @@
+<h1>Ma bibliothèque</h1>
+
+<div class="toolbar">
+  <app-search-bar (search)="query.set($event)" />
+
+  <label>
+    Trier par
+    <select (change)="onSortChange($event)">
+      <option value="title">titre</option>
+      <option value="author">auteur</option>
+      <option value="isbn">ISBN</option>
+    </select>
+  </label>
+</div>
+
+@if (query()) {
+  <p class="count">{{ visibleBooks().length }} résultat(s) pour « {{ query() }} »</p>
+}
+
+<app-book-list [books]="visibleBooks()" />

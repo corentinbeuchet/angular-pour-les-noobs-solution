@@ -1,0 +1,11 @@
+<h1>Ma bibliothèque</h1>
+
+<p>{{ books.length }} livre(s)</p>
+
+<ul>
+  @for (book of books; track book.isbn) {
+    <li>{{ describeBook(book) }}</li>
+  } @empty {
+    <li>Aucun livre pour l'instant.</li>
+  }
+</ul>

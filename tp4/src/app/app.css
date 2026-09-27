@@ -1,0 +1,16 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.5rem;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
+nav a.active {
+  font-weight: bold;
+  color: var(--accent);
+}

@@ -1,0 +1,24 @@
+<div class="toolbar">
+  <app-search-bar (search)="query.set($event)" />
+
+  <label>
+    Trier par
+    <select (change)="onSortChange($event)">
+      <option value="title">titre</option>
+      <option value="author">auteur</option>
+      <option value="isbn">ISBN</option>
+    </select>
+  </label>
+
+  <a routerLink="/livres/ajouter">Ajouter un livre</a>
+</div>
+
+@if (error(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+}
+
+@if (loading()) {
+  <p>Chargement…</p>
+} @else {
+  <app-book-list [books]="visibleBooks()" (remove)="remove($event)" />
+}

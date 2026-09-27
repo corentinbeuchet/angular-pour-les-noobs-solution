@@ -1,0 +1,11 @@
+<header>
+  <h1>Ma bibliothèque</h1>
+  <nav>
+    <a routerLink="/livres" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Livres</a>
+    <a routerLink="/livres/ajouter" routerLinkActive="active">Ajouter</a>
+  </nav>
+</header>
+
+<main>
+  <router-outlet />
+</main>
